@@ -1,0 +1,117 @@
+<?php
+
+namespace App\Models;
+
+use App\Core\AbstractModel;
+
+
+
+class TicketComment extends AbstractModel
+{
+    protected string $table = "tickets_comments";
+
+    protected string $primaryKey = "id";
+
+    protected array $fillable = [
+        "ticket_id",
+        "user_id",
+        "comment",
+
+    ];
+
+    protected array $required = [
+        "ticket_id" => "O campo CHAMADO é obrigatório.",
+        "user_id" => "O campo USUÁRIO é obrigatório.",
+        "comment" => "O campo COMENTÁRIO é obrigatório.",
+    ];
+
+    protected bool $timestamps = true;
+
+    public function getId(): int
+    {
+        return $this->attributes["id"];
+    }
+
+
+    public function setTicketId(int $ticketId): void
+    {
+        $this->attributes["ticket_id"] = $ticketId;
+    }
+
+
+    public function getTicketId(): ?int
+    {
+        return $this->attributes["ticket_id"];
+    }
+
+    public function setUserId(int $userId): void
+    {
+
+        $this->attributes["user_id"] = $userId;
+    }
+
+    public function getUserId(): ?int
+    {
+        return $this->attributes["user_id"];
+    }
+
+
+    public function setComment(string $comment): void
+    {
+        $comment = trim(strip_tags($comment));
+        if (strlen($comment) < 20) {
+            throw new \InvalidArgumentException("O comentário deve ter pelo menos 20 caracteres.");
+        }
+        $this->attributes["comment"] = $comment;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->attributes["comment"];
+    }
+
+    public function getCreatedAt(): string
+    {
+        return $this->attributes["created_at"];
+    }
+
+    public function ticket(): ?Ticket
+    {
+        return Ticket::find($this->getTicketId());
+    }
+
+    public function user(): ?User
+    {
+        return User::find($this->getUserId());
+    }
+
+
+    public function validateBusinessRules(array $data): array
+    {
+        $errors = [];
+
+       $statusInvalid = [
+           Ticket::FINISHED,
+           Ticket::ARCHIVED
+       ];
+
+       $ticket = Ticket::find($data['ticket_id']);
+
+       if(in_array($ticket->getStatus(), $statusInvalid, true)){
+           $errors[] = "Não é possível comentar no chamado com status:  " . $ticket->getStatus();
+       }
+
+
+        return $errors;
+    }
+
+    public static function commentByTicketId(int $ticketId): ?array
+    {
+
+       return (new static())
+           ->where("ticket_id", "=", $ticketId)
+           ->orderBy("created_at")
+           ->get();
+
+    }
+}
