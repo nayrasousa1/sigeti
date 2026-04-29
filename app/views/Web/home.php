@@ -395,7 +395,7 @@
                                  alt="">
                             <div class="social">
                                 <a href=""><i class="bi bi-whatsapp"></i></a>
-                                <a href="https://www.instagram.com/geovanasousa_4?igsh=MXJlZXZtY282cXBjcA=="><i class="bi bi-instagram"></i></a>
+                                <a href=""><i class="bi bi-instagram"></i></a>
                                 <a href=""><i class="bi bi-linkedin"></i></a>
                             </div>
                         </div>
@@ -440,7 +440,7 @@
                             </div>
                         </div>
                         <div class="member-info text-center">
-                            <h4>Náyla Gabrielle</h4>
+                            <h4>Nayla Gabriela</h4>
                             <span>Desenvolvedora</span>
                         </div>
                     </div>
