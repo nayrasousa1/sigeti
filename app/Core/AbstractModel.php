@@ -2,6 +2,7 @@
 
 namespace App\Core;
 
+use App\views\Web\Connection;
 use \DateTimeImmutable;
 use \DateTimeZone;
 use PDO;
