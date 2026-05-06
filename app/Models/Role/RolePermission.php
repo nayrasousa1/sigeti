@@ -6,24 +6,21 @@ use App\Core\AbstractModel;
 
 class RolePermission extends AbstractModel
 {
-    protected string $table = "role_Permissions";
-
-    protected string $primaryKey = "id";
-
-    protected array $fields = [
-        "name",
-        "Permissions_id",
+    protected string $table = 'role_permissions';
+    protected string $primaryKey = 'id';
+    protected array $fillable = [
+        'role_id',
+        'permission_id',
     ];
 
-    protected array $request = [
-        "name" => "O campo PERFIL é obrigatório.",
-        "Permissions_id" => "O campo PERMISSÃO é obrigatorio.",
+    protected array $required = [
+        "role_id" => "O campo PERFIL é obrigatório",
+        "permission_id" => "O campo PERMISSÃO é obrigatório",
     ];
 
     protected bool $timestamps = false;
 
     protected bool $softDelete = false;
-
 
     public function getId(): int
     {
@@ -33,8 +30,9 @@ class RolePermission extends AbstractModel
     public function setRoleId(int $roleId): void
     {
         if ($roleId < 1) {
-            throw new \InvalidArgumentException("o perfil é inválido");
+            throw new \InvalidArgumentException("O perfil é inválido");
         }
+
         $this->attributes["role_id"] = $roleId;
     }
 
@@ -43,11 +41,12 @@ class RolePermission extends AbstractModel
         return $this->attributes["role_id"];
     }
 
-    public function setPermissionId(string $permissionId): void
+    public function setPermissionId(int $permissionId): void
     {
         if ($permissionId < 1) {
             throw new \InvalidArgumentException("A permissão é inválida");
         }
+
         $this->attributes["permission_id"] = $permissionId;
     }
 
@@ -80,7 +79,7 @@ class RolePermission extends AbstractModel
         $statement->bindValue(":permission", $permission, \PDO::PARAM_STR);
         $statement->execute();
 
-        return (int)$statement->fetch(\PDO::FETCH_ASSOC)["total"] > 0;
+        return (int) $statement->fetch(\PDO::FETCH_ASSOC)["total"] > 0;
     }
 
     public static function syncPermissions(int $roleId, array $permissionIds): void
@@ -101,7 +100,7 @@ class RolePermission extends AbstractModel
 
         foreach ($permissionIds as $permissionId) {
             $statement->bindValue(":role_id", $roleId, \PDO::PARAM_INT);
-            $statement->bindValue(":permission_id", (int)$permissionId, \PDO::PARAM_INT);
+            $statement->bindValue(":permission_id", (int) $permissionId, \PDO::PARAM_INT);
             $statement->execute();
         }
     }
@@ -120,5 +119,4 @@ class RolePermission extends AbstractModel
 
         return array_column($statement->fetchAll(\PDO::FETCH_ASSOC), "permission_id");
     }
-
 }
