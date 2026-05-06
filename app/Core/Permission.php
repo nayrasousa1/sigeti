@@ -5,10 +5,6 @@ namespace App\Core;
 class Permission extends AbstractModel
 {
 
-    protected string $table = "permission";
-
-    protected string $primaryKey = "id";
-
     //CHAMADOS
 
     public const OPEN_TICKET = "abrir_chamado";
@@ -72,20 +68,20 @@ class Permission extends AbstractModel
 
     //RELATORIOS
 
-    public const VIEW_REPORTS = "ver _relatorios";
+    public const VIEW_REPORTS = "ver_relatorios";
 
-    public const EXPORT_REPORTS = "exportar _relatorios";
+    public const EXPORT_REPORTS = "exportar_relatorios";
 
 
     //USUARIOS
 
-    public const VIEW_USERS = "ver _usuarios";
+    public const VIEW_USERS = "ver_usuarios";
 
-    public const CREATE_USER = "criar _usuario";
-_
-    public const EDIT_USER = "editar _usuario";
+    public const CREATE_USER = "criar_usuario";
 
-    public const TOGGLE_USER_STATUS = "ativar _inativar _usuario";
+    public const EDIT_USER = "editar_usuario";
+
+    public const TOGGLE_USER_STATUS = "ativar_inativar_usuario";
 
     public const DELETE_USER = "excluir_usuario";
 
