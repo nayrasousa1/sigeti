@@ -64,11 +64,13 @@ class AuthController extends Controller
         }
 
         $session = new Session();
+
         $session->set("auth", [
             "id" => $user->getId(),
             "name" => $user->getName(),
             "email" => $user->getEmail(),
-            "role" => $user->getRole()
+            "role" => $user->getRole(),
+            "role_id" => $user->getRoleId()
         ]);
 
         $session->regenerate();
