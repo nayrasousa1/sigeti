@@ -2,7 +2,7 @@
 
 namespace App\Core;
 
-class Permission extends AbstractModel
+final class Permission
 {
 
     //CHAMADOS
@@ -11,7 +11,7 @@ class Permission extends AbstractModel
 
     public const VIEW_MY_TICKET = "ver_meus_chamado";
 
-    public const VIEW_ALL_TICKETS = "ver_todas_chamados";
+    public const VIEW_ALL_TICKETS = "ver_todos_chamados";
 
     public const COMMENT_TICKET = "comentar_chamado";
 
