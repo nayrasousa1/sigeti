@@ -6,6 +6,7 @@ namespace App\Controllers\Technician;
 use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Message;
+use App\Core\Permission;
 use App\Models\Category;
 use App\Models\School;
 use App\Models\SchoolUser;
@@ -18,7 +19,7 @@ class TicketController extends Controller
     {
         parent::__construct("App");
 
-        Auth::requireRole(User::TECHNICIAN);
+        Auth::requirePermission(Permission::VIEW_ALL_TICKETS);
     }
 
     public function index(): void
@@ -35,6 +36,8 @@ class TicketController extends Controller
 
     public function create(): void
     {
+        Auth::requirePermission(Permission::OPEN_TICKET);
+
         $teachers = User::userByRole(User::TEACHER);
         $schools = School::all();
         $categories = Category::all();
@@ -56,6 +59,8 @@ class TicketController extends Controller
 
     public function store(?array $data): void
     {
+        Auth::requirePermission(Permission::OPEN_TICKET);
+
         $this->validateCsrfToken($data, "/tecnico/chamados/cadastrar");
 
         $data['status'] = Ticket::OPEN;
@@ -105,6 +110,8 @@ class TicketController extends Controller
 
     public function edit(?array $data): void
     {
+        Auth::requirePermission(Permission::EDIT_TICKET);
+
         $ticket = Ticket::find($data['id']);
 
         if(!$ticket){
@@ -127,6 +134,8 @@ class TicketController extends Controller
 
     public function update(?array $data): void
     {
+        Auth::requirePermission(Permission::EDIT_TICKET);
+
         $this->validateCsrfToken($data, "/tecnico/chamados/editar/" . $data["id"]);
 
         $ticket = Ticket::find($data['id']);
@@ -180,6 +189,8 @@ class TicketController extends Controller
 
     public function destroy(?array $data): void
     {
+        Auth::requirePermission(Permission::DELETE_TICKET);
+
         try {
             $ticket = Ticket::find($data['id']);
             $ticket->delete();
