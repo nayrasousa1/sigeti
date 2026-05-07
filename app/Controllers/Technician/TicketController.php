@@ -2,14 +2,12 @@
 
 namespace App\Controllers\Technician;
 
-
 use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Message;
 use App\Core\Permission;
 use App\Models\Category;
 use App\Models\School;
-use App\Models\SchoolUser;
 use App\Models\Ticket;
 use App\Models\User;
 
@@ -24,6 +22,8 @@ class TicketController extends Controller
 
     public function index(): void
     {
+        Auth::requirePermission(Permission::VIEW_ALL_TICKETS);
+
         $tickets = (new Ticket())->ticketsOrderedByStatusPriorityAndOpeningDate();
 
         echo $this->view->render("technician/ticket/index", [
@@ -42,7 +42,7 @@ class TicketController extends Controller
         $schools = School::all();
         $categories = Category::all();
 
-        echo $this->view->render("technician/ticket/create",[
+        echo $this->view->render("technician/ticket/create", [
             "teachers" => $teachers,
             "schools" => $schools,
             "categories" => $categories
@@ -85,11 +85,11 @@ class TicketController extends Controller
             $newTicket->fill([
                 "title" => $data["title"],
                 "description" => $data["description"],
-                "school_id"=>$data["school_id"],
+                "school_id" => $data["school_id"],
                 "category_id" => $data["category_id"],
-                "opened_by"=> $data["opened_by"],
+                "opened_by" => $data["opened_by"],
                 "status" => $data["status"],
-                "priority"=> $data["priority"],
+                "priority" => $data["priority"],
             ]);
 
 
@@ -114,7 +114,7 @@ class TicketController extends Controller
 
         $ticket = Ticket::find($data['id']);
 
-        if(!$ticket){
+        if (!$ticket) {
             Message::warning("Esse Usuário não existe!");
             redirect("/tecnico/chamados");
             return;
@@ -141,7 +141,7 @@ class TicketController extends Controller
         $ticket = Ticket::find($data['id']);
 
         try {
-            if(!$ticket){
+            if (!$ticket) {
                 Message::error("Esse chamado não existe!");
                 redirect("/tecnico/chamados");
                 return;
@@ -162,14 +162,14 @@ class TicketController extends Controller
 
             $ticket->fill([
                 "status" => $data["status"],
-                "priority"=> $data["priority"],
+                "priority" => $data["priority"],
             ]);
 
-            if(!empty($data['assigned_to'])){
+            if (!empty($data['assigned_to'])) {
                 $ticket->setAssignedTo($data['assigned_to']);
             }
 
-            if(in_array($data['status'], [Ticket::FINISHED, Ticket::ARCHIVED], true)){
+            if (in_array($data['status'], [Ticket::FINISHED, Ticket::ARCHIVED], true)) {
                 $ticket->setClosedAt();
             }
 
@@ -197,7 +197,6 @@ class TicketController extends Controller
             Message::success("Chamado removido com sucesso!");
             redirect("/tecnico/chamados");
             return;
-
 
 
         } catch (\InvalidArgumentException $invalidArgumentException) {
