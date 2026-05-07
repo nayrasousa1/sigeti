@@ -11,7 +11,7 @@ class Permission extends AbstractModel
 
     public const VIEW_MY_TICKET = "ver_meus_chamado";
 
-    public const VIEW_ALL_TICKET = "ver_todas_chamados";
+    public const VIEW_ALL_TICKETS = "ver_todas_chamados";
 
     public const COMMENT_TICKET = "comentar_chamado";
 
@@ -85,7 +85,7 @@ class Permission extends AbstractModel
 
     public const DELETE_USER = "excluir_usuario";
 
-    public const RESERT_USER_PASSWORD = "redefinir_senha_usuario";
+    public const RESET_USER_PASSWORD = "redefinir_senha_usuario";
 
     public const VIEW_USER_LAST_ACCESS = "ver_ultimo_acesso_usuario";
 
