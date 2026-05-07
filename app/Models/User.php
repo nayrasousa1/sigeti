@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Core\AbstractModel;
+use App\Models\Department\UserDepartment;
+use App\Models\Role\Role;
+use App\Models\Role\RolePermission;
 use http\Exception\InvalidArgumentException;
 
 class User extends AbstractModel
@@ -16,6 +19,7 @@ class User extends AbstractModel
         "email",
         "password",
         "document",
+        "role_id",
         "role",
         "last_login_at",
         "status",
@@ -24,10 +28,12 @@ class User extends AbstractModel
     ];
 
     protected array $required = [
-        "name" => "O campo nome é obrigatorio.",
-        "email" => "O campo description é obrigatorio.",
-        "password" => "O campo senha é obrigatorio.",
+        "name" => "O campo NOME é obrigatorio.",
+        "email" => "O campo EMAIL é obrigatorio.",
+        "password" => "O campo SENHA é obrigatorio.",
+        "role_id" => "o campo PERFIL é obrigatório."
     ];
+
     protected bool $timestamps = true;
     public const TECHNICIAN = "tecnico";
     public const TEACHER = "professor";
@@ -120,6 +126,72 @@ class User extends AbstractModel
     public function getDocument(): ?string
     {
         return $this->attributes["document"];
+    }
+
+    public function setRoleId(int $roleId): void
+    {
+        if($roleId < 1) {
+            throw new \InvalidArgumentException("o ID do PERFIL do usuário é inválido.");
+        }
+        $this->attributes["role_id"] = $roleId;
+    }
+
+    public function getRoleId(): int
+    {
+        return $this->attributes["role_id"];
+    }
+
+    public function role(): ?Role
+    {
+        return $this->getRoleId() ? Role::find($this->getRoleId()) : null;
+    }
+
+    public function hasPermission(string $permission): bool
+    {
+        if (!$this->getRoleId()) {
+            return false;
+        }
+
+        return RolePermission::userHasPermission($this->getRoleId(), $permission);
+    }
+
+    public static function usersByPermission(string $permission): array
+    {
+        $instance = new static();
+
+        $sql = "SELECT DISTINCT users.*
+            FROM users
+            INNER JOIN roles ON roles.id = users.role_id
+            INNER JOIN role_permissions ON role_permissions.role_id = roles.id
+            INNER JOIN permissions ON permissions.id = role_permissions.permission_id
+            WHERE permissions.name = :permission
+              AND users.status = 'ativo'
+              AND users.deleted_at IS NULL";
+
+        $statement = $instance->connection->prepare($sql);
+        $statement->bindValue(":permission", $permission, \PDO::PARAM_STR);
+        $statement->execute();
+
+        $rows = $statement->fetchAll(\PDO::FETCH_ASSOC);
+
+        $users = [];
+        foreach ($rows as $row) {
+            $users[] = static::hydrate($row);
+        }
+
+        return $users;
+    }
+
+    public function departments(): array
+    {
+        return UserDepartment::linksByUser($this->getId());
+    }
+
+    public function existsDepartmentLinks(): bool
+    {
+        return (new UserDepartment())
+                ->where("user_id", "=", $this->getId())
+                ->count() > 0;
     }
 
     public function setRole(?string $role): void
