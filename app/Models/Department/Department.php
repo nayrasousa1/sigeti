@@ -3,6 +3,7 @@
 namespace App\Models\Department;
 
 use App\Core\AbstractModel;
+use App\Models\Ticket;
 
 class Department extends AbstractModel
 {
@@ -17,11 +18,9 @@ class Department extends AbstractModel
         "address"
     ];
 
-    protected array $request = [
+    protected array $required = [
         "name" => "O campo NOME é obrigatório.",
         "code" => "O campo CÓDIGO é obrigatório.",
-
-
     ];
 
     protected bool $timestamps = true;
