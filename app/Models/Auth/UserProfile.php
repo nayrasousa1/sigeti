@@ -33,7 +33,7 @@ class UserProfile extends AbstractModel
 
     protected bool $timestamps = true;
 
-    protected bool $softDelete = false;Ticket
+    protected bool $softDelete = false;
 
     private const GENDERS = [
         "masculino",
