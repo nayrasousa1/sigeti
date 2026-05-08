@@ -34,6 +34,8 @@ class User extends AbstractModel
         "role_id" => "o campo PERFIL é obrigatório."
     ];
 
+    protected bool $softDelete = true;
+
     protected bool $timestamps = true;
     public const TECHNICIAN = "tecnico";
     public const TEACHER = "professor";
