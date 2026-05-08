@@ -9,11 +9,11 @@ use InvalidArgumentException;
 
 class UserDepartment extends AbstractModel
 {
-    protected string $table = "user_department";
+    protected string $table = "user_departments";
 
     protected string $primaryKey = "id";
 
-    public const MORNING = "manhã";
+    public const MORNING = "manha";
 
     public const AFTERNOON = "tarde";
 
@@ -24,20 +24,20 @@ class UserDepartment extends AbstractModel
     public const NOT_APPLICABLE = "nao_aplicavel";
 
     public const SHIFTS = [
-      self::MORNING,
-      self::AFTERNOON,
-      self::NIGHT,
-      self::WHOLE,
-      self::NOT_APPLICABLE,
+        self::MORNING,
+        self::AFTERNOON,
+        self::NIGHT,
+        self::WHOLE,
+        self::NOT_APPLICABLE,
     ];
 
-    protected array $fields = [
+    protected array $fillable = [
         "user_id",
         "department_id",
         "shift",
     ];
 
-    protected array $request = [
+    protected array $required = [
         "user_id" => "O campo USUÁRIO é obrigatório.",
         "department" => "O campo DEPARTAMENTO é obrigatorio.",
         "shift" => "O campo TURNO é obrigatorio.",
@@ -55,8 +55,6 @@ class UserDepartment extends AbstractModel
 
     public function setUserId(int $userId): void
     {
-        $userId = trim(strip_tags($userId));
-
         if ($userId < 1) {
             throw new \InvalidArgumentException("O ID do usuario é inválido.");
         }
@@ -69,14 +67,17 @@ class UserDepartment extends AbstractModel
         return $this->attributes["user_id"];
     }
 
-    public function setDepartmentId(int $DepartmentId): void
+    public function setDepartmentId(int $departmentId): void
     {
-        $departmentId = trim(strip_tags($DepartmentId));
-
         if ($departmentId < 1) {
             throw new \InvalidArgumentException("O ID do departamento é inválido.");
         }
         $this->attributes["department_id"] = $departmentId;
+    }
+
+    public function getDepartmentId(): int
+    {
+        return $this->attributes["department_id"];
     }
 
     public function setShift(?string $shift): void
