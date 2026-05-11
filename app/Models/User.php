@@ -348,6 +348,7 @@ class User extends AbstractModel
         return (new static())->where("role", "=", $role)->get();
     }
 
+
     public static function totalUsers(): ?int
     {
         $instance = new static();
