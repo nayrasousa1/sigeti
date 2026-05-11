@@ -132,7 +132,7 @@ class User extends AbstractModel
 
     public function setRoleId(int $roleId): void
     {
-        if($roleId < 1) {
+        if ($roleId < 1) {
             throw new \InvalidArgumentException("o ID do PERFIL do usuário é inválido.");
         }
         $this->attributes["role_id"] = $roleId;
@@ -348,5 +348,44 @@ class User extends AbstractModel
         return (new static())->where("role", "=", $role)->get();
     }
 
+    public static function totalUsers(): ?int
+    {
+        $instance = new static();
+        $sql = "SELECT COUNT(*) FROM users
+        WHERE deleted_at is null
+        AND status = 'ativo'";
+
+        $statement = $instance->connection->prepare($sql);
+        $statement->execute();
+
+        $totalUsers = $statement->fetchColumn();
+        return $totalUsers;
+    }
+
+    public static function recentUsers(): array
+    {
+        $instance = new static();
+        $sql = "SELECT * FROM users
+        WHERE
+            deleted_at is null AND 
+            status != 'inativo'
+       ORDER BY
+           CREATED_AT DESC
+           LIMIT 5";
+
+        $statement = $instance->connection->prepare($sql);
+        $statement->execute();
+
+        $rows = $statement->fetchAll(\PDO::FETCH_ASSOC);
+
+        $recentUsers = $statement->fetchColumn();
+
+        foreach ($rows as $row) {
+            $recentUsers[] = static::hydrate($row);
+        }
+
+        return $recentUsers;
+
+    }
 
 }
