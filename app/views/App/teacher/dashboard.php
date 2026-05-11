@@ -1,4 +1,4 @@
-<?= $this->layout('teach/app', [
+<?= $this->layout('teacher/app', [
         'title' => $title ?? "Dashboard | Professor - " . APP_NAME,
         "menuActive" => "dashboard",
 ]) ?>
