@@ -178,4 +178,17 @@ class Department extends AbstractModel
         return $errors;
     }
 
+    public static function totalDepartments(): ?int
+    {
+        $instance = new static();
+        $sql = "SELECT COUNT(*) FROM departments
+        WHERE deleted_at is null";
+
+        $statement = $instance->connection->prepare($sql);
+        $statement->execute();
+
+        $totalDepartments = $statement->fetchColumn();
+        return $totalDepartments;
+    }
+
 }
