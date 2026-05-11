@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Ticket;
 
 use App\Core\AbstractModel;
-use DateTime;
-use DateTimeZone;
-use http\Exception\InvalidArgumentException;
+use App\Models\Category;
+use App\Models\School;
+use App\Models\User;
 use PDO;
 
 class Ticket extends AbstractModel

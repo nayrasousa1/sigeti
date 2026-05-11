@@ -1,4 +1,4 @@
-<?= $this->layout('teacher/app', [
+<?= $this->layout('teach/app', [
         'title' => $title ?? "Dashboard | Professor - " . APP_NAME,
         "menuActive" => "dashboard",
 ]) ?>
@@ -280,7 +280,6 @@
         window.dashboardData = {
             quantityTicketsByMonth: <?= json_encode($quantityTicketsByMonth ?? []) ?>,
             quantityTicketsByCategory: <?= json_encode($quantityTicketsByCategory ?? []) ?>,
-
         }
     </script>
 
