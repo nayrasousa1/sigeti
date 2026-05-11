@@ -81,6 +81,9 @@ $router->get("/chamados/{ticket_id}/comentarios", "Teacher\\TicketCommentControl
 $router->post("/chamados/{ticket_id}/comentarios", "Teacher\\TicketCommentController@store");
 
 
+require __DIR__ . "/admin.php";
+require __DIR__ . "/profile.php";
+
 
 /*
 |--------------------------------------------------------------------------
