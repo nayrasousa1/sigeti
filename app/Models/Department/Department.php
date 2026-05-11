@@ -190,5 +190,4 @@ class Department extends AbstractModel
         $totalDepartments = $statement->fetchColumn();
         return $totalDepartments;
     }
-
 }
