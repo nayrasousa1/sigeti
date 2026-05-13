@@ -153,4 +153,6 @@ final class Permission
 
     public const MANAGE_SESSIONS = "gerenciar_sessoes";
 
+
+
 }
