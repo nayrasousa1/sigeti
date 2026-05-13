@@ -79,7 +79,7 @@ class Permission extends AbstractModel
         }
 
         if (strlen($groupName) > 100) {
-            throw new \InvalidArgumentException("O nome do grupo da permissção deve ter até 100 caracteres.");
+            throw new \InvalidArgumentException("O nome do grupo da permissão deve ter até 100 caracteres.");
         }
 
         $this->attributes["group_name"] = $groupName;
@@ -98,6 +98,7 @@ class Permission extends AbstractModel
 
         $statement = $this->connection->prepare($sql);
         $statement->execute();
+
 
         $grouped = [];
 
