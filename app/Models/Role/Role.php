@@ -148,4 +148,9 @@ class Role extends AbstractModel
         $totalRoles = $statement->fetchColumn();
         return $totalRoles;
     }
+
+    public function getRoleByName(mixed $name): ?Role
+    {
+        return $this->where("name", "=", $name)->first();
+    }
 }
