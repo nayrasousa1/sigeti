@@ -49,6 +49,7 @@ function assets_flex_start(string $path = null): string
 
     return $base;
 }
+
 function assets_mazer(string $path = null): string
 {
     $base = APP_URL . "/resources/themes/dist";

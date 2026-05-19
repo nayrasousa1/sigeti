@@ -6,25 +6,23 @@ use App\Core\AbstractModel;
 
 class Role extends AbstractModel
 {
-    protected string $table = 'roles';
-
-    protected string $primaryKey = 'id';
+    protected string $table = "roles";
+    protected string $primaryKey = "id";
 
     protected array $fillable = [
-        'name',
-        'description',
-        'is_protected'
+        "name",
+        "description",
+        "is_protected",
     ];
 
     protected array $required = [
-        'name' => 'O campo nome é obrigatorio',
+        "name" => "O campo NOME é obrigatório.",
     ];
 
     protected bool $timestamps = true;
-
     protected bool $softDelete = true;
 
-    public function getId()
+    public function getId(): int
     {
         return $this->attributes["id"];
     }
@@ -33,33 +31,30 @@ class Role extends AbstractModel
     {
         $name = trim(strip_tags($name));
 
-        if (strlen($name) < 5) {
-            throw new \InvalidArgumentException("O nome do perfil deve ter pelo menos de 5 caracteres");
+        if (strlen($name) < 3) {
+            throw new \InvalidArgumentException("O nome do perfil deve ter pelo menos 3 caracteres.");
         }
 
-        if (strlen($name) > 50) {
-            throw new \InvalidArgumentException("O nome do perfil deve ter até 50 caracteres");
+        if (strlen($name) > 100) {
+            throw new \InvalidArgumentException("O nome do perfil deve ter no máximo 100 caracteres.");
         }
 
         $this->attributes["name"] = $name;
-
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->attributes["name"];
     }
 
-    public function setDescription(string $description): void
+    public function setDescription(?string $description): void
     {
-        $description = trim(strip_tags($description));
+        if ($description !== null) {
+            $description = trim(strip_tags($description));
 
-        if (strlen($description) < 20) {
-            throw new \InvalidArgumentException("A descrição do perfil deve ter pelo menos de 20 caracteres");
-        }
-
-        if (strlen($description) > 100) {
-            throw new \InvalidArgumentException("A descrição do perfil deve ter até 100 caracteres");
+            if (strlen($description) > 255) {
+                throw new \InvalidArgumentException("A descrição deve ter no máximo 255 caracteres.");
+            }
         }
 
         $this->attributes["description"] = $description;
@@ -67,7 +62,7 @@ class Role extends AbstractModel
 
     public function getDescription(): ?string
     {
-        return $this->attributes["description"];
+        return $this->attributes["description"] ?? null;
     }
 
     public function setIsProtected(bool $isProtected): void
@@ -80,23 +75,15 @@ class Role extends AbstractModel
         return (bool) ($this->attributes["is_protected"] ?? false);
     }
 
-    public function existsRoleByName(string $name, ?int $ignoredId = null): bool
+    public function existsRoleByName(string $name, ?int $ignoreId = null): bool
     {
-        $sql = "SELECT COUNT(*) AS total 
-                FROM {$this->table} 
-                WHERE name = :name";
+        $query = (new static())->where("name", "=", $name);
 
-        $params = ['name' => $name];
-
-        if ($ignoredId) {
-            $sql .= " AND id != :ignored_id";
-            $params['ignored_id'] = $ignoredId;
+        if ($ignoreId) {
+            $query->where("id", "!=", $ignoreId);
         }
-        $statement = $this->connection->prepare($sql);
-        $statement->execute($params);
-        $result = $statement->fetch(\PDO::FETCH_ASSOC);
 
-        return (int) ($result['total'] ?? 0) > 0;
+        return $query->first() !== null;
     }
 
     public function existsUsers(): bool
@@ -136,21 +123,17 @@ class Role extends AbstractModel
         return $errors;
     }
 
-    public static function totalRoles(): ?int
+    public function totalRoles(): ?int
     {
-        $instance = new static();
-        $sql = "SELECT COUNT(*) FROM roles
-        WHERE deleted_at is null";
-
-        $statement = $instance->connection->prepare($sql);
-        $statement->execute();
-
-        $totalRoles = $statement->fetchColumn();
-        return $totalRoles;
+        return (new static())
+            ->count();
     }
 
-    public function getRoleByName(mixed $name): ?Role
+    public function recentlyCreatedAndNonDeletedRoles(): ?array
     {
-        return $this->where("name", "=", $name)->first();
+        return (new static())
+            ->orderBy("created_at", "DESC")
+            ->limit(5)
+            ->get();
     }
 }

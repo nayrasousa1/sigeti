@@ -12,35 +12,21 @@ class DashboardController extends Controller
     public function __construct()
     {
         parent::__construct("App");
-
         Auth::requirePermission(Permission::VIEW_TECHNICIAN_DASHBOARD);
     }
 
     public function index(): void
     {
         $ticketModel = new Ticket();
-        $tickets = (new  Ticket())->ticketsOrderedByStatusPriorityAndOpeningDate();
 
-        $quantityTicketsByMonth = $ticketModel->countTicketsByMonth();
-
-        $quantityTicketsByCategory = $ticketModel->countTicketsByCategory();
-
-        $quantityTicketsByStatus = $ticketModel->countTicketsByStatus();
-
-        $avgResolutionDays = $ticketModel->avgResolutionDaysByMonthCurrentYear();
-        $ticketsByPriorityAndStatus = $ticketModel->countByPriorityAndStatusCurrentYear();
-
-
-        echo $this->view->render("technician/dashboard",[
-            "tickets" => $tickets,
-            "quantityTicketsByMonth" => $quantityTicketsByMonth,
-            "quantityTicketsByCategory" => $quantityTicketsByCategory,
-            "quantityTicketsByStatus" => $quantityTicketsByStatus,
-
-            "avgResolutionDays" => $avgResolutionDays,
-            "ticketsByPriorityAndStatus" => $ticketsByPriorityAndStatus
+        echo $this->view->render("technician/dashboard", [
+            "tickets" => $ticketModel->allOrdered(),
+            "quantityTicketsByStatus" => $ticketModel->countByStatusCurrentYear(),
+            "quantityTicketsByMonth" => $ticketModel->countByMonthCurrentYear(),
+            "quantityTicketsByCategory" => $ticketModel->countByCategoryCurrentYear(),
+            "resolutionRate" => $ticketModel->resolutionRateCurrentYear(),
+            "avgResolutionDays" => $ticketModel->avgResolutionDaysByMonthCurrentYear(),
+            "ticketsByPriorityAndStatus" => $ticketModel->countByPriorityAndStatusCurrentYear(),
         ]);
     }
-
-
 }

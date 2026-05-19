@@ -4,8 +4,6 @@ namespace App\Models\Department;
 
 use App\Core\AbstractModel;
 use App\Models\User;
-use InvalidArgumentException;
-
 
 class UserDepartment extends AbstractModel
 {
@@ -13,53 +11,32 @@ class UserDepartment extends AbstractModel
 
     protected string $primaryKey = "id";
 
-    public const MORNING = "manha";
-
-    public const AFTERNOON = "tarde";
-
-    public const NIGHT = "noite";
-
-    public const WHOLE = "integral";
-
-    public const NOT_APPLICABLE = "nao_aplicavel";
-
-    public const SHIFTS = [
-        self::MORNING,
-        self::AFTERNOON,
-        self::NIGHT,
-        self::WHOLE,
-        self::NOT_APPLICABLE,
-    ];
-
     protected array $fillable = [
         "user_id",
-        "department_id",
-        "shift",
+        "department_id"
     ];
 
     protected array $required = [
         "user_id" => "O campo USUÁRIO é obrigatório.",
-        "department" => "O campo DEPARTAMENTO é obrigatorio.",
-        "shift" => "O campo TURNO é obrigatorio.",
+        "department_id" => "O campo DEPARTAMENTO é obrigatório."
     ];
 
     protected bool $timestamps = true;
 
     protected bool $softDelete = true;
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->attributes["id"];
     }
 
-
     public function setUserId(int $userId): void
     {
-        if ($userId < 1) {
-            throw new \InvalidArgumentException("O ID do usuario é inválido.");
+        if ($userId <= 0) {
+            throw new \InvalidArgumentException("O usuário informado é inválido.");
         }
 
-        $this->attributes["role_id"] = $userId;
+        $this->attributes["user_id"] = $userId;
     }
 
     public function getUserId(): int
@@ -69,9 +46,10 @@ class UserDepartment extends AbstractModel
 
     public function setDepartmentId(int $departmentId): void
     {
-        if ($departmentId < 1) {
-            throw new \InvalidArgumentException("O ID do departamento é inválido.");
+        if ($departmentId <= 0) {
+            throw new \InvalidArgumentException("O departamento informado é inválido.");
         }
+
         $this->attributes["department_id"] = $departmentId;
     }
 
@@ -80,33 +58,15 @@ class UserDepartment extends AbstractModel
         return $this->attributes["department_id"];
     }
 
-    public function setShift(?string $shift): void
-    {
-        $shift = $shift ?? self::NOT_APPLICABLE;
-
-        if (!in_array($shift, self::SHIFTS)) {
-            throw new \InvalidArgumentException("O TURNO não é válido.");
-        }
-
-        $this->attributes["shift"] = $shift;
-    }
-
-    public function getShift(): string
-    {
-        return $this->attributes["shift"];
-    }
-
     public function department(): ?Department
     {
         return Department::find($this->getDepartmentId());
     }
 
-
     public function user(): ?User
     {
         return User::find($this->getUserId());
     }
-
 
     public static function linksByUser(int $userId): array
     {
@@ -114,7 +74,6 @@ class UserDepartment extends AbstractModel
             ->where("user_id", "=", $userId)
             ->get();
     }
-
 
     public static function validateDepartments(array $links): array
     {
