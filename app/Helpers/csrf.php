@@ -2,7 +2,11 @@
 
 function csrf_token(): string
 {
-    if (!isset($_SESSION['_csrf'])) {
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+
+    if (empty($_SESSION['_csrf'])) {
         $_SESSION['_csrf'] = bin2hex(random_bytes(32));
     }
 
@@ -11,16 +15,25 @@ function csrf_token(): string
 
 function csrf_input(): string
 {
-    return '<input type="hidden" name="_csrf" value="' . csrf_token() . '">';
+    $token = htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8');
+    return '<input type="hidden" name="_csrf" value="' . $token . '">';
 }
 
 function csrf_verify(?string $token): bool
 {
-    if (!$token || !isset($_SESSION['_csrf'])) {
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+
+    if (empty($token) || empty($_SESSION['_csrf'])) {
         return false;
     }
 
     $valid = hash_equals($_SESSION['_csrf'], $token);
-    unset($_SESSION['_csrf']);
+
+    if ($valid) {
+        unset($_SESSION['_csrf']);
+    }
+
     return $valid;
 }
